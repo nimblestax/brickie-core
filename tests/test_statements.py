@@ -1,6 +1,6 @@
 """The two layout rules every generated statement follows."""
 
-from brickie.statements import listed, statement
+from nimblestax.statements import listed, statement
 
 
 def test_a_statement_keeps_its_lines_in_order_and_drops_the_ones_that_dont_apply():

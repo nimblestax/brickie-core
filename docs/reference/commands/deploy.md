@@ -1,12 +1,12 @@
 ---
-title: brickie deploy
+title: nstx deploy
 description: Deploy to an Environment and refresh its tables.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
 ```console
-$ brickie deploy [OPTIONS]
+$ nstx deploy [OPTIONS]
 ```
 
 ## Options
@@ -19,7 +19,7 @@ $ brickie deploy [OPTIONS]
 
 ## JSON result
 
-With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `brickie.deploy/1`. When it succeeds, `result` is:
+With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `nimblestax.deploy/1`. When it succeeds, `result` is:
 
 | Field | Type | Meaning |
 | --- | --- | --- |

@@ -7,18 +7,18 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from brickie.cli import app
+from nimblestax.cli import app
 
 runner = CliRunner()
 
 
-def brickie(project: Path, *args: str):
+def nstx(project: Path, *args: str):
     return runner.invoke(app, [*args, "--project", str(project)])
 
 
 @pytest.fixture
 def project(tmp_path: Path) -> Path:
-    """The project `brickie init` writes, which has append silver `sales.silver.orders`."""
+    """The project `nstx init` writes, which has append silver `sales.silver.orders`."""
     assert runner.invoke(app, ["init", str(tmp_path)]).exit_code == 0
     return tmp_path
 
@@ -32,7 +32,7 @@ def write_model(project: Path, name: str, query: str) -> str:
 
 
 def compiled(project: Path) -> str:
-    result = brickie(project, "compile", "--env", "dev")
+    result = nstx(project, "compile", "--env", "dev")
     assert result.exit_code == 0, result.output
     return result.stdout
 
@@ -48,13 +48,13 @@ def test_a_gold_model_reading_a_stream_compiles_to_a_streaming_table(project: Pa
 
 
 def failures(project: Path) -> list[dict]:
-    result = brickie(project, "validate", "--json")
+    result = nstx(project, "validate", "--json")
     assert result.exit_code == 1, result.output
     return json.loads(result.stdout)["diagnostics"]
 
 
 def assert_passes(project: Path) -> None:
-    result = brickie(project, "validate", "--json")
+    result = nstx(project, "validate", "--json")
     assert result.exit_code == 0, result.output
 
 
@@ -73,7 +73,7 @@ def test_a_stream_of_a_seed_fails(project: Path):
 
     [failure] = failures(project)
 
-    assert failure["rule"] == "BRK212"
+    assert failure["rule"] == "NSTX212"
     assert failure["name"] == "stream-of-materialized-view"
     assert failure["file"] == file
     assert failure["line"] == 2
@@ -87,7 +87,7 @@ def test_a_stream_of_a_gold_model_that_doesnt_stream_fails(project: Path):
 
     [failure] = failures(project)
 
-    assert failure["rule"] == "BRK212"
+    assert failure["rule"] == "NSTX212"
     assert "sales.gold.fct_orders" in failure["message"]
 
 

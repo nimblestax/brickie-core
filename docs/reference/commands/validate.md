@@ -1,12 +1,12 @@
 ---
-title: brickie validate
+title: nstx validate
 description: Check config and SQL references. With `--platform`, also check the workspace.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
 ```console
-$ brickie validate [OPTIONS]
+$ nstx validate [OPTIONS]
 ```
 
 ## Options
@@ -20,7 +20,7 @@ $ brickie validate [OPTIONS]
 
 ## JSON result
 
-With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `brickie.validate/1`. When it succeeds, `result` is:
+With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `nimblestax.validate/1`. When it succeeds, `result` is:
 
 Empty: `validate` reports what it finds as diagnostics.
 

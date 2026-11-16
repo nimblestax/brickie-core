@@ -1,12 +1,12 @@
 ---
-title: brickie compile
+title: nstx compile
 description: Write generated code, or print it for one Environment.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
 ```console
-$ brickie compile [OPTIONS]
+$ nstx compile [OPTIONS]
 ```
 
 ## Options
@@ -19,7 +19,7 @@ $ brickie compile [OPTIONS]
 
 ## JSON result
 
-With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `brickie.compile/1`. When it succeeds, `result` is:
+With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `nimblestax.compile/1`. When it succeeds, `result` is:
 
 Without `--env`, `compile` writes the generated code.
 

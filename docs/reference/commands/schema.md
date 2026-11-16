@@ -1,12 +1,12 @@
 ---
-title: brickie schema
-description: Print a Kind's fields from the installed Brickie. Needs no project.
+title: nstx schema
+description: Print a Kind's fields from the installed Nimblestax. Needs no project.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
 ```console
-$ brickie schema <kind> [OPTIONS]
+$ nstx schema <kind> [OPTIONS]
 ```
 
 ## Arguments
@@ -23,12 +23,12 @@ $ brickie schema <kind> [OPTIONS]
 
 ## JSON result
 
-With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `brickie.schema/1`. When it succeeds, `result` is:
+With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `nimblestax.schema/1`. When it succeeds, `result` is:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `kind` | string | The Kind described. |
-| `version` | integer | The newest version of the Kind this Brickie supports. |
+| `version` | integer | The newest version of the Kind this Nimblestax supports. |
 | `json_schema` | object | The Kind's JSON Schema at that version. |
 
 ## Exit codes
