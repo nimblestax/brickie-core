@@ -1,13 +1,13 @@
 ---
 title: Schedule refreshes
-description: Refresh an Environment's tables on a schedule, set in brickie.platform.yaml, and paused outside the production environment unless you say otherwise.
+description: Refresh an Environment's tables on a schedule, set in nimblestax.platform.yaml, and paused outside the production environment unless you say otherwise.
 ---
 
-Each Environment has one Job that refreshes every pipeline. `brickie deploy` runs it once after each deploy. A schedule also runs it on its own.
+Each Environment has one Job that refreshes every pipeline. `nstx deploy` runs it once after each deploy. A schedule also runs it on its own.
 
 ## Add a schedule
 
-Add `schedule` under the Environment in `brickie.platform.yaml`:
+Add `schedule` under the Environment in `nimblestax.platform.yaml`:
 
 ```yaml
 environments:
@@ -27,7 +27,7 @@ environments:
 Compile to see the schedule Databricks receives:
 
 ```shell
-brickie compile
+nstx compile
 ```
 
 ```text
@@ -47,7 +47,7 @@ The prod target in `build/databricks.yaml` now sets the Job's schedule:
             pause_status: UNPAUSED
 ```
 
-The schedule takes effect at the next `brickie deploy --env prod`.
+The schedule takes effect at the next `nstx deploy --env prod`.
 
 ## Schedule an Environment other than prod
 
@@ -64,7 +64,7 @@ To pause prod's schedule, set `paused: true` and deploy.
 
 ## Remove a schedule
 
-Delete `schedule` and deploy. The Job then runs only when `brickie deploy` runs it.
+Delete `schedule` and deploy. The Job then runs only when `nstx deploy` runs it.
 
 ## Next steps
 

@@ -1,33 +1,33 @@
 ---
-title: brickie skills
-description: Keep the Brickie Skills in this project.
+title: nstx skills
+description: Keep the Nimblestax Skills in this project.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
 ## update
 
-Refresh both copies of each Brickie Skill to this Brickie's version.
+Refresh both copies of each Nimblestax Skill to this Nimblestax's version.
 
 ```console
-$ brickie skills update [OPTIONS]
+$ nstx skills update [OPTIONS]
 ```
 
 ### Options
 
 | Option | Takes | Default | Meaning |
 | --- | --- | --- | --- |
-| `--force` | Nothing |  | Replace skills edited since Brickie wrote them. |
+| `--force` | Nothing |  | Replace skills edited since Nimblestax wrote them. |
 | `--project` | path | `.` | The project folder. |
 | `--json` | Nothing |  | Print one JSON envelope. |
 
 ### JSON result
 
-With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `brickie.skills.update/1`. When it succeeds, `result` is:
+With `--json`, it prints the [envelope](../json-output.md) with `schema` set to `nimblestax.skills.update/1`. When it succeeds, `result` is:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `skills` | array of string | The Brickie Skill folders written. A skill already up to date isn't listed. |
+| `skills` | array of string | The Nimblestax Skill folders written. A skill already up to date isn't listed. |
 
 ## Exit codes
 

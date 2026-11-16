@@ -2,10 +2,10 @@
 title: Gold Model
 description: A dataset built from a SQL file that reads Logical Names.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
-A file with `kind: model`, at version 1. `brickie schema model` prints the same fields from the Brickie you installed.
+A file with `kind: model`, at version 1. `nstx schema model` prints the same fields from the Nimblestax you installed.
 
 ## Fields
 

@@ -10,9 +10,9 @@ import pytest
 import yaml
 from typer.testing import CliRunner
 
-from brickie import cli
-from brickie.deploy import pinned_cli
-from brickie.deploy.databricks import WorkspaceError, failed_update_errors
+from nimblestax import cli
+from nimblestax.deploy import pinned_cli
+from nimblestax.deploy.databricks import WorkspaceError, failed_update_errors
 
 runner = CliRunner()
 
@@ -66,7 +66,7 @@ def test_a_fail_expectation_that_fired_is_reported_with_the_pipelines_message(
     envelope = deploy(project, FailingRefresh([EXPECTATION_FIRED]), monkeypatch)
 
     [diagnostic] = envelope["diagnostics"]
-    assert diagnostic["rule"] == "BRK907"
+    assert diagnostic["rule"] == "NSTX907"
     assert diagnostic["name"] == "expectation-failed"
     assert diagnostic["message"] == EXPECTATION_FIRED
     assert "`quarantine` or `warn`" in diagnostic["fix"]
@@ -78,7 +78,7 @@ def test_a_rule_on_a_column_bronze_does_not_have_yet_is_reported(
     envelope = deploy(project, FailingRefresh([COLUMN_MISSING]), monkeypatch)
 
     [diagnostic] = envelope["diagnostics"]
-    assert diagnostic["rule"] == "BRK906"
+    assert diagnostic["rule"] == "NSTX906"
     assert diagnostic["message"] == COLUMN_MISSING
     assert "without the rule" in diagnostic["fix"]
 
@@ -89,7 +89,7 @@ def test_any_other_pipeline_failure_is_reported_with_its_message(
     envelope = deploy(project, FailingRefresh(["[DIVIDE_BY_ZERO] Division by zero."]), monkeypatch)
 
     [diagnostic] = envelope["diagnostics"]
-    assert diagnostic["rule"] == "BRK908"
+    assert diagnostic["rule"] == "NSTX908"
     assert diagnostic["message"] == "[DIVIDE_BY_ZERO] Division by zero."
 
 
@@ -98,7 +98,7 @@ def test_each_failed_pipeline_gets_its_own_diagnostic(
 ):
     envelope = deploy(project, FailingRefresh([COLUMN_MISSING, EXPECTATION_FIRED]), monkeypatch)
 
-    assert [found["rule"] for found in envelope["diagnostics"]] == ["BRK906", "BRK907"]
+    assert [found["rule"] for found in envelope["diagnostics"]] == ["NSTX906", "NSTX907"]
 
 
 def test_errors_are_read_from_updates_since_the_refresh_started(
@@ -120,7 +120,7 @@ def test_with_no_pipeline_error_to_read_the_cli_output_is_reported(
     envelope = deploy(project, workspace, monkeypatch)
 
     [diagnostic] = envelope["diagnostics"]
-    assert diagnostic["rule"] == "BRK904"
+    assert diagnostic["rule"] == "NSTX904"
     assert "TERMINATED FAILED" in diagnostic["message"]
 
 
@@ -162,11 +162,11 @@ EVENTS = [
 ]
 
 SUMMARY = {
-    "bundle": {"name": "brickie_probe"},
+    "bundle": {"name": "nimblestax_probe"},
     "resources": {
         "pipelines": {
-            "sales_ingest": {"id": "p-ingest", "name": "brickie_probe_sales_ingest"},
-            "sales_gold": {"id": "p-gold", "name": "brickie_probe_sales_gold"},
+            "sales_ingest": {"id": "p-ingest", "name": "nimblestax_probe_sales_ingest"},
+            "sales_gold": {"id": "p-gold", "name": "nimblestax_probe_sales_gold"},
         }
     },
 }
@@ -185,7 +185,8 @@ def fake_databricks(folder: Path, events: dict[str, list[dict]]) -> Path:
         f'echo "$@" >> {folder}/calls\n'
         'case "$1 $2" in\n'
         f"  \"--version \") echo 'Databricks CLI v{pinned_cli.MINIMUM}' ;;\n"
-        '  "bundle run") echo \'"brickie_probe_refresh" RUNNING\'; echo \'"brickie_probe_refresh"'
+        '  "bundle run") echo \'"nimblestax_probe_refresh" RUNNING\';'
+        ' echo \'"nimblestax_probe_refresh"'
         " TERMINATED FAILED'; echo 'Error: run failed' >&2; exit 1 ;;\n"
         f'  "bundle summary") /bin/cat {folder}/summary.json ;;\n'
         f'  "pipelines list-pipeline-events") /bin/cat {folder}/$3.json ;;\n'
@@ -195,8 +196,8 @@ def fake_databricks(folder: Path, events: dict[str, list[dict]]) -> Path:
     return script
 
 
-def run_brickie(project: Path, databricks: Path) -> subprocess.CompletedProcess:
-    executable = Path(sys.executable).with_name("brickie")
+def run_nimblestax(project: Path, databricks: Path) -> subprocess.CompletedProcess:
+    executable = Path(sys.executable).with_name("nstx")
     arguments = ["deploy", "--env", "dev", "--json", "--project", str(project)]
     # No PATH, so nothing on it could be run in its place.
     environment = {pinned_cli.OVERRIDE: str(databricks)}
@@ -207,11 +208,11 @@ def test_the_failed_updates_error_is_read_from_the_event_log(project: Path, tmp_
     folder = tmp_path_factory.mktemp("cli")
     databricks = fake_databricks(folder, {"p-ingest": EVENTS, "p-gold": []})
 
-    result = run_brickie(project, databricks)
+    result = run_nimblestax(project, databricks)
 
     assert result.returncode == 2, result.stderr
     [diagnostic] = json.loads(result.stdout)["diagnostics"]
-    assert diagnostic["rule"] == "BRK907"
+    assert diagnostic["rule"] == "NSTX907"
     assert diagnostic["message"] == EXPECTATION_FIRED
     assert "TERMINATED FAILED" in result.stderr
     calls = (folder / "calls").read_text().splitlines()
@@ -225,11 +226,11 @@ def test_the_cli_output_is_reported_when_no_pipeline_logged_an_error(
 ):
     databricks = fake_databricks(tmp_path_factory.mktemp("cli"), {"p-ingest": [], "p-gold": []})
 
-    result = run_brickie(project, databricks)
+    result = run_nimblestax(project, databricks)
 
     assert result.returncode == 2, result.stderr
     [diagnostic] = json.loads(result.stdout)["diagnostics"]
-    assert diagnostic["rule"] == "BRK904"
+    assert diagnostic["rule"] == "NSTX904"
     assert "TERMINATED FAILED" in diagnostic["message"]
     assert "Error: run failed" in diagnostic["message"]
     assert "TERMINATED FAILED" in result.stderr
@@ -271,7 +272,7 @@ def test_a_failed_lookup_of_the_pipelines_errors_is_reported(
     envelope = deploy(project, FailingRefresh([], unreadable=True), monkeypatch)
 
     [diagnostic] = envelope["diagnostics"]
-    assert diagnostic["rule"] == "BRK904"
+    assert diagnostic["rule"] == "NSTX904"
     assert "TERMINATED FAILED" in diagnostic["message"]
     assert "couldn't read the pipelines' errors" in diagnostic["message"]
     assert "list-pipeline-events failed" in diagnostic["message"]

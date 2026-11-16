@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from brickie.cli import app
+from nimblestax.cli import app
 
 runner = CliRunner()
 

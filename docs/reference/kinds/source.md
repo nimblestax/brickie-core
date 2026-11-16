@@ -2,10 +2,10 @@
 title: Source
 description: An external dataset landed in bronze and conformed into silver.
 generated: true
-brickie_version: 0.1.0
+nimblestax_version: 0.1.0
 ---
 
-A file with `kind: source`, at version 1. `brickie schema source` prints the same fields from the Brickie you installed.
+A file with `kind: source`, at version 1. `nstx schema source` prints the same fields from the Nimblestax you installed.
 
 ## Fields
 

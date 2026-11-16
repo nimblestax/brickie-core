@@ -1,8 +1,8 @@
-<h1 align=center><code>brickie</code></h1>
+<h1 align=center>Nimblestax</h1>
 
 <div align=center>
-  <a href=https://github.com/nimblestax/brickie-core/actions/workflows/ci.yaml>
-    <img src=https://github.com/nimblestax/brickie-core/actions/workflows/ci.yaml/badge.svg alt="build status">
+  <a href=https://github.com/nimblestax/core/actions/workflows/ci.yaml>
+    <img src=https://github.com/nimblestax/core/actions/workflows/ci.yaml/badge.svg alt="build status">
   </a>
   <a href=LICENSE>
     <img src=https://img.shields.io/badge/license-Apache%202.0-blue.svg alt="Apache 2.0 license">
@@ -10,9 +10,9 @@
 </div>
 <br>
 
-Brickie brings the software development lifecycle to Databricks. Today it covers pipelines, from bronze to gold: config-driven, reviewed in pull requests, tested, and promoted from dev to prod. It grows to cover more of the platform.
+Nimblestax brings the software development lifecycle to Databricks. Today it covers pipelines, from bronze to gold: config-driven, reviewed in pull requests, tested, and promoted from dev to prod. It grows to cover more of the platform.
 
-**Status:** early development, and below 1.0, so a minor release may need edits to your project. Install it into your project with `uv add --dev brickie-core`. The Plan shown on [nimblestax.com](https://nimblestax.com) is illustrative: Brickie has no Plan command today.
+**Status:** early development, and below 1.0, so a minor release may need edits to your project. Install it into your project with `uv add --dev nimblestax`, which gives you the `nstx` command and `nimblestax`, its long form. The Plan shown on [nimblestax.com](https://nimblestax.com) is illustrative: Nimblestax has no Plan command today.
 
 A pipeline is YAML and SQL in your repo. A Source says where data lands:
 
@@ -32,10 +32,10 @@ SELECT order_id, amount
 FROM sales.silver.orders
 ```
 
-Brickie compiles that for each Environment:
+Nimblestax compiles that for each Environment:
 
 ```console
-$ brickie compile --env dev
+$ nstx compile --env dev
 CREATE OR REFRESH STREAMING TABLE dev_sales.bronze.orders
 TBLPROPERTIES ('pipelines.reset.allowed' = 'false')
 AS SELECT *
@@ -49,23 +49,23 @@ FROM dev_sales.silver.orders
 And it catches mistakes before anything touches a workspace:
 
 ```console
-$ brickie validate
-BRK201 domains/sales/models/fct_orders.sql: sales.silver.ordrs isn't a table in this project.
+$ nstx validate
+NSTX201 domains/sales/models/fct_orders.sql: sales.silver.ordrs isn't a table in this project.
   Fix: Declare a Source or Gold Model with this name, or correct the Logical Name.
 ```
 
 ## What works today
 
-- `brickie init` creates a working project, with GitHub Actions workflows.
-- `brickie validate` checks config and SQL references with no workspace. A Model's dependencies come from its SQL, with no list to keep: CTEs, aliases and `STREAM(...)` just work, and anything Brickie can't read, such as `IDENTIFIER(...)`, is an error rather than a guess.
-- `brickie compile` writes generated code, or prints it for one Environment.
-- `brickie deploy` deploys to an Environment and refreshes its tables.
-- `brickie schema` prints any Kind's fields.
+- `nstx init` creates a working project, with GitHub Actions workflows.
+- `nstx validate` checks config and SQL references with no workspace. A Model's dependencies come from its SQL, with no list to keep: CTEs, aliases and `STREAM(...)` just work, and anything Nimblestax can't read, such as `IDENTIFIER(...)`, is an error rather than a guess.
+- `nstx compile` writes generated code, or prints it for one Environment.
+- `nstx deploy` deploys to an Environment and refreshes its tables.
+- `nstx schema` prints any Kind's fields.
 - Every command has [`--json` output](docs/reference/json-output.md), rule IDs and fixed exit codes.
 
 ## The Nimblestax Way
 
-Brickie is built around an opinionated way of building on Databricks. Read the principles at [nimblestax.com/way](https://nimblestax.com/way).
+Nimblestax is built around an opinionated way of building on Databricks. Read the principles at [nimblestax.com/way](https://nimblestax.com/way).
 
 ## Follow progress
 

@@ -8,7 +8,7 @@ import yaml
 from jsonschema import Draft202012Validator
 from typer.testing import CliRunner
 
-from brickie.cli import app
+from nimblestax.cli import app
 
 runner = CliRunner()
 
@@ -23,7 +23,7 @@ columns:
 """
 
 
-def brickie(project: Path, *args: str):
+def nstx(project: Path, *args: str):
     return runner.invoke(app, [*args, "--project", str(project)])
 
 
@@ -44,7 +44,7 @@ def edit(project: Path, file: str, old: str, new: str) -> None:
 
 
 def failures(project: Path) -> list[dict]:
-    result = brickie(project, "validate", "--json")
+    result = nstx(project, "validate", "--json")
     assert result.exit_code == 1, result.output
     return json.loads(result.stdout)["diagnostics"]
 
@@ -70,14 +70,14 @@ def failures(project: Path) -> list[dict]:
         (MODEL, "sql: fct_orders.sql", "sql: fct_orders.txt", "sql"),
     ],
 )
-def test_a_bad_field_names_the_field_in_a_brk106(
+def test_a_bad_field_names_the_field_in_a_nstx106(
     project: Path, file: str, old: str, new: str, field: str
 ):
     edit(project, file, old, new)
 
     diagnostics = failures(project)
 
-    assert {d["rule"] for d in diagnostics} == {"BRK106"}, diagnostics
+    assert {d["rule"] for d in diagnostics} == {"NSTX106"}, diagnostics
     assert any(d["message"].startswith(f"{field}: ") for d in diagnostics), diagnostics
     assert all(d["file"] == file for d in diagnostics)
 
@@ -87,7 +87,7 @@ def test_a_seed_column_name_that_is_not_an_identifier_is_named(project: Path):
 
     [diagnostic] = failures(project)
 
-    assert diagnostic["rule"] == "BRK106"
+    assert diagnostic["rule"] == "NSTX106"
     assert diagnostic["message"].startswith("columns.vat rate")
 
 
@@ -133,7 +133,11 @@ def test_the_served_schema_passes_a_valid_file_and_fails_invalid_ones(
 
 @pytest.mark.parametrize(
     ("kind", "title"),
-    [("source", "Brickie Source"), ("seed", "Brickie Seed"), ("model", "Brickie Gold Model")],
+    [
+        ("source", "Nimblestax Source"),
+        ("seed", "Nimblestax Seed"),
+        ("model", "Nimblestax Gold Model"),
+    ],
 )
 def test_the_served_schema_titles_and_describes_every_field(kind: str, title: str):
     json_schema = served_schema(kind)
