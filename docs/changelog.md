@@ -11,6 +11,11 @@ Nimblestax follows [Semantic Versioning](https://semver.org). Before 1.0, a mino
 
 ## Unreleased
 
+- [`nstx compile`](reference/commands/compile.md) writes a build package: the generated code, every environment's settings, and `nimblestax.package.json`, which records the commit, the Nimblestax version and a checksum of each file. See [Build packages](concepts/build-packages.md).
+- [`nstx deploy --package`](reference/commands/deploy.md) deploys the build package it is given, as it is, and never rebuilds it. A package changed since it was built is refused with [`NSTX918`](reference/rules/nstx918.md), and a folder that isn't one with [`NSTX917`](reference/rules/nstx917.md). With `--json`, the result adds `commit` and `package_checksum`.
+- Each successful `nstx deploy` writes a deployment manifest into the environment's workspace, next to the bundle: `nimblestax/manifest.json`, plus a copy per commit, keeping the newest 100. A failed deploy writes none. See [Deployment manifests](concepts/deployment-manifests.md).
+- The GitHub merge workflow builds one package in a `package` job and deploys it to dev with `nstx deploy --env dev --package build`. Run `nstx init --ci github` in a new folder and copy `.github/workflows/nimblestax-merge.yaml` over yours to pick this up.
+
 ## 0.1.0
 
 The first release. Install it into your project with `uv add --dev nimblestax`, which gives you the `nstx` command and `nimblestax`, its long form.

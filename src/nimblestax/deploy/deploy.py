@@ -1,9 +1,13 @@
 """`nstx deploy`: ships one Environment and refreshes it."""
 
 from datetime import datetime
+from pathlib import Path
+from typing import NamedTuple
 
 from nimblestax.build import bundle, compiler
+from nimblestax.build import package as build_package
 from nimblestax.check import rules
+from nimblestax.deploy import manifest
 from nimblestax.deploy.databricks import Workspace, WorkspaceError
 from nimblestax.diagnostics import (
     DOCS_ROOT,
@@ -22,13 +26,34 @@ class InvalidProject(Failure):
     pass
 
 
-def deploy(project: Project, env: str, workspace: Workspace) -> None:
-    problems = errors(rules.check(project))
-    if problems:
-        raise InvalidProject(problems)
-    package = compiler.write_package(project)
+class Deployment(NamedTuple):
+    manifest: dict
+    warnings: list[Diagnostic]
+
+
+def deploy(
+    project: Project, env: str, workspace: Workspace, package: Path | None = None
+) -> Deployment:
+    """Deploy `package`, or a package built now from the project, then refresh it.
+
+    A given package is deployed as it is and never rebuilt: CI validated the project before
+    building it.
+    Only a deploy that succeeded, refresh included, writes the Deployment Manifest.
+    """
+    if package is None:
+        problems = errors(rules.check(project))
+        if problems:
+            raise InvalidProject(problems)
+        package = compiler.write_package(project)
+    record = build_package.read_record(package)
     workspace.deploy_bundle(package, env)
     started = datetime.now().astimezone()
+    _refresh(workspace, package, env, started)
+    written = manifest.manifest(env, record, started)
+    return Deployment(written, manifest.store(workspace, package, env, written))
+
+
+def _refresh(workspace: Workspace, package: Path, env: str, started: datetime) -> None:
     try:
         workspace.run_job(package, env, bundle.REFRESH_JOB)
     except WorkspaceError as failure:
